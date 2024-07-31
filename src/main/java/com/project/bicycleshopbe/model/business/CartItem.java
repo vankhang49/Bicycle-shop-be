@@ -19,11 +19,11 @@ public class CartItem {
     @Column(name = "item_id")
     private Long itemId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "price_id")
     private Pricing pricing;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private AppUser appUser;
 

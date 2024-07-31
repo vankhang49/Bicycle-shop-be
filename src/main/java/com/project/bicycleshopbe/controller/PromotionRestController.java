@@ -13,7 +13,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/public/promotions")
-@CrossOrigin("*")
 public class PromotionRestController {
 
     @Autowired

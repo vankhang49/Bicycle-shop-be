@@ -36,6 +36,9 @@ public class AuthenticationService {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
     private final AuthenticationManager authenticationManager;
 
     /**
@@ -53,12 +56,14 @@ public class AuthenticationService {
                     )
             );
             var user = userRepository.findByEmail(request.getEmail());
-            System.out.println(user);
             UserInforUserDetails userDetails = new UserInforUserDetails(user, user.getRoles());
             var jwtToken = jwtService.generateToken(userDetails);
+            var refreshToken = refreshTokenService.createRefreshToken(request.getEmail());
             return AuthenticationResponse.builder()
                     .statusCode(200)
                     .token(jwtToken)
+                    .refreshToken(refreshToken.getToken())
+                    .userId(user.getUserId())
                     .fullName(user.getFullName())
                     .message("Đăng nhập thành công!!!")
                     .build();
@@ -77,6 +82,7 @@ public class AuthenticationService {
      */
     public AuthenticationResponse getMyInfo(String email) {
         AppUser user = userRepository.findByEmail(email);
+        System.out.println(user);
         if (user != null) {
             return AuthenticationResponse.builder()
                     .statusCode(200)
@@ -86,7 +92,6 @@ public class AuthenticationService {
                     .userCode(user.getUserCode())
                     .dateCreate(user.getDateCreate())
                     .dateOfBirth(user.getDateOfBirth())
-                    .email(user.getEmail())
                     .phoneNumber(user.getPhoneNumber())
                     .roles(user.getRoles())
                     .fullName(user.getFullName())

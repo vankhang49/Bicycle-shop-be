@@ -12,7 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Component
@@ -64,7 +66,7 @@ public class DefaultAdminInitializer implements CommandLineRunner {
             admin.setAccountNonExpired(true);
             admin.setAccountNonLocked(true);
             admin.setCredentialsNonExpired(true);
-            List<AppRole> roles = new ArrayList<>();
+            Set<AppRole> roles = new HashSet<>();
             AppRole role = roleService.findRoleByRoleName("ROLE_ADMIN");
             roles.add(role);
             admin.setRoles(roles);

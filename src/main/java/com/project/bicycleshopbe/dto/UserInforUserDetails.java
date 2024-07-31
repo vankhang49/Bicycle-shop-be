@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class UserInforUserDetails implements UserDetails {
 
@@ -16,7 +17,7 @@ public class UserInforUserDetails implements UserDetails {
 
     private List<GrantedAuthority> authorities = new ArrayList<>();
 
-    public UserInforUserDetails(AppUser user, List<AppRole> roles) {
+    public UserInforUserDetails(AppUser user, Set<AppRole> roles) {
         this.user = user;
         if (roles != null) {
             for (AppRole role : roles) {

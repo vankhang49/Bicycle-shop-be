@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Response DTO for authentication-related operations.
@@ -29,6 +29,8 @@ public class AuthenticationResponse {
 
     private String token;
 
+    private String refreshToken;
+
     private Long userId;
 
     private String email;
@@ -47,7 +49,7 @@ public class AuthenticationResponse {
 
     private String address;
 
-    private List<AppRole> roles;
+    private Set<AppRole> roles;
 
     private Boolean accountNonExpired;
 

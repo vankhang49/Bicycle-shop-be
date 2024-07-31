@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CartItemService implements ICartItemService {
@@ -26,6 +27,11 @@ public class CartItemService implements ICartItemService {
     }
 
     @Override
+    public Set<CartItem> findAllCartByUserId(Long userId) {
+        return cartItemRepository.findAllByAppUserUserId(userId);
+    }
+
+    @Override
     public CartItem findById(Long id) {
         return cartItemRepository.findById(id).orElse(null);
     }
@@ -38,5 +44,20 @@ public class CartItemService implements ICartItemService {
     @Override
     public void save(CartItem cartItem) {
         cartItemRepository.save(cartItem);
+    }
+
+    @Override
+    public void deleteAllCartByUserId(Long userId) {
+        cartItemRepository.deleteAllByAppUserUserId(userId);
+    }
+
+    @Override
+    public void deleteCartItemByPriceIdAndUserId(Long priceId, Long userId) {
+        cartItemRepository.deleteCartItemByPricingPriceIdAndAppUserUserId(priceId, userId);
+    }
+
+    @Override
+    public void updateQuantityCartItemByPriceIdAndUserId(Long priceId, Long userId, Integer quantity) {
+        cartItemRepository.updateQuantityForCartItem(userId, priceId, quantity);
     }
 }

@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/public/product-families")
-@CrossOrigin("*")
 public class ProductFamilyRestController {
     @Autowired
     private IProductFamilyService productFamilyService;

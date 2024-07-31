@@ -88,13 +88,12 @@ public class JwtService {
             UserDetails userDetails
     ) {
         try {
-            System.out.println("đã tạo token");
             return Jwts
                     .builder()
                     .setClaims(extraClaims)
                     .setSubject(userDetails.getUsername())
                     .setIssuedAt(new Date(System.currentTimeMillis()))
-                    .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                    .setExpiration(new Date(System.currentTimeMillis() + 3600000))
                     .signWith(getSignKey(), SignatureAlgorithm.HS256)
                     .compact();
         } catch (Exception e) {
