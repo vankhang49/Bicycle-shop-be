@@ -16,6 +16,10 @@ public interface IProductService extends IGenerateService<Product> {
                                                                               String categoryName, Pageable pageable);
     Page<Product> searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandName(String productName, String familyName,
                                                                               String categoryName, String brandName, Pageable pageable);
+    Page<Product> searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandNameAndPriceBetween(String productName,String categoryName,
+                                                                                                         String brandName, String familyName,
+                                                                                                         Double priceBefore, Double priceAfter,
+                                                                                                         Pageable pageable);
     void saveProductWithDetails(Product product, List<ProductImage> productImages, List<Pricing> pricingList);
 
     void updateProduct(Product product);

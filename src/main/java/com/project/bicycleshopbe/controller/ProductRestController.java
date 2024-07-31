@@ -34,30 +34,32 @@ public class ProductRestController {
 
     @GetMapping
     public ResponseEntity<Page<Product>> getAllProducts(@RequestParam(name = "page", defaultValue = "0") int page,
-                                                                                       @RequestParam(name = "nameSearch", defaultValue = "") String nameSearch,
-                                                                                       @RequestParam(name = "categoryName", defaultValue = "") String categoryName,
-                                                                                       @RequestParam(name = "familyName", defaultValue = "") String familyName,
-                                                                                       @RequestParam(name = "brandName", defaultValue = "") String brandName
-                                                                                       ) {
-        System.out.println(nameSearch + "," + familyName + "," +categoryName + "," + brandName);
+                                                        @RequestParam(name = "nameSearch", defaultValue = "") String nameSearch,
+                                                        @RequestParam(name = "categoryName", defaultValue = "") String categoryName,
+                                                        @RequestParam(name = "familyName", defaultValue = "") String familyName,
+                                                        @RequestParam(name = "brandName", defaultValue = "") String brandName,
+                                                        @RequestParam(name = "priceBefore", defaultValue = "0") Double priceBefore,
+                                                        @RequestParam(name = "priceAfter", defaultValue = "9999999999") Double priceAfter
+    ) {
+        System.out.println(nameSearch + "," + familyName + "," + categoryName + "," + brandName + "," + priceBefore + "," + priceAfter);
         if (page < 0) {
             page = 0;
         }
-        Page<Product> products = productService.searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandName(nameSearch, familyName, categoryName, brandName, PageRequest.of(page, 12));
-        if (products.isEmpty()){
+        Page<Product> products = productService.searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandNameAndPriceBetween(nameSearch, familyName, categoryName, brandName, priceBefore, priceAfter, PageRequest.of(page, 12));
+        if (products.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/detail/{id}")
-    public ResponseEntity<ProductAndPriceOfProductDTO> getAllPriceOfProduct(@PathVariable(name = "id") Long id){
+    public ResponseEntity<ProductAndPriceOfProductDTO> getAllPriceOfProduct(@PathVariable(name = "id") Long id) {
         Product product = productService.findById(id);
         List<Pricing> pricingList = priceOfProductService.searchAllByProductId(id);
-        if (product == null){
+        if (product == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        if (pricingList.isEmpty()){
+        if (pricingList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         ProductAndPriceOfProductDTO productAndPriceOfProductDTO = new ProductAndPriceOfProductDTO(product, pricingList);
@@ -65,23 +67,23 @@ public class ProductRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findProductById(@PathVariable(name = "id") Long id){
+    public ResponseEntity<Product> findProductById(@PathVariable(name = "id") Long id) {
         Product product = productService.findById(id);
-        if (product == null){
+        if (product == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<?> saveProduct(@RequestBody Product product){
+    public ResponseEntity<?> saveProduct(@RequestBody Product product) {
         System.out.println(product);
         productService.save(product);
         return new ResponseEntity<>(200, HttpStatus.CREATED);
     }
 
     @PutMapping()
-    public ResponseEntity<?> updateProduct(@RequestBody Product product){
+    public ResponseEntity<?> updateProduct(@RequestBody Product product) {
         System.out.println(product);
         productService.updateProduct(product);
         return new ResponseEntity<>(200, HttpStatus.OK);

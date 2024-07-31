@@ -80,6 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         setAuthentication(request, userDetails);
                     } else {
                         if (refreshTokenService.isTokenExpired(refreshToken.get())) {
+                            System.out.println("remake token");
                             String newAccessToken = jwtService.generateToken(userDetails);
                             refresh.setExpiryDate(Instant.now().plusMillis(86400000));
                             refreshTokenService.updateRefreshToken(refresh);

@@ -49,6 +49,11 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    public Page<Product> searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandNameAndPriceBetween(String productName, String categoryName, String brandName, String familyName, Double priceBefore, Double priceAfter, Pageable pageable) {
+        return productRepository.searchAllByProductNameAndCategoryNameAndBrandNameAndFamilyNameAndPriceBetween(productName, categoryName, brandName, familyName, priceBefore, priceAfter, pageable);
+    }
+
+    @Override
     public List<Product> findAll() {
         return productRepository.findAll();
     }
