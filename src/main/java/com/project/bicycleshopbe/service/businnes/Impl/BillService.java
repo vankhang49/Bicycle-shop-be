@@ -20,6 +20,16 @@ public class BillService implements IBillService {
     }
 
     @Override
+    public List<Bill> searchAllByUserId(Long userId) {
+        return billRepository.searchByAppUserUserIdOrderByPaidDescDateCreateDesc(userId);
+    }
+
+    @Override
+    public Page<Bill> searchAllByUserCodeAndFullName(String userCode, String fullName, Pageable pageable) {
+        return billRepository.searchAllByAppUserUserCodeContainingAndAppUserFullNameContaining(userCode, fullName, pageable);
+    }
+
+    @Override
     public List<Bill> findAll() {
         return billRepository.findAll();
     }

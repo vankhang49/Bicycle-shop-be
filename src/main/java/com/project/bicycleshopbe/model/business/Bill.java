@@ -4,6 +4,7 @@ import com.project.bicycleshopbe.model.permission.AppUser;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +23,12 @@ public class Bill {
 
     @Column(name = "customer_name")
     private String customerName;
+
+    @Column(name = "dateCreate")
+    private LocalDateTime dateCreate;
+
+    @Column(name = "paid")
+    private Boolean paid;
 
     private String email;
 

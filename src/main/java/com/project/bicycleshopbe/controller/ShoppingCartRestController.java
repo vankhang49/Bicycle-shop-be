@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @RestController
@@ -76,6 +77,8 @@ public class ShoppingCartRestController {
         }
 
         bill.setAppUser(user);
+        bill.setDateCreate(LocalDateTime.now());
+        bill.setPaid(false);
 
         // Thiết lập mối quan hệ hai chiều
         for (BillItem item : bill.getBillItems()) {
