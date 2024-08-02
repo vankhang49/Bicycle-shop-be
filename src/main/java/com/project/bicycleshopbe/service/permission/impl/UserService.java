@@ -17,6 +17,11 @@ public class UserService implements IUserService {
     private IUserRepository userRepository;
 
     @Override
+    public Page<AppUser> searchAllCustomerByUserCodeOrFullName(String userCode, String fullName, Pageable pageable) {
+        return userRepository.searchAllByUserCodeOrFullNameAndRoleId(userCode, fullName, pageable);
+    }
+
+    @Override
     public AppUser findByEmail(String email) {
         return userRepository.findByEmail(email);
     }

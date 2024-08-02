@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface IProductService extends IGenerateService<Product> {
-    Page<Product> searchAllByName(String name, Pageable pageable);
-    Page<Product> searchAllByCategoryNameContaining(String categoryName, Pageable pageable);
+    Page<Product> searchAllByProductCodeOrProductNameOrBrandName(String productCode, String productName, String brandName, Pageable pageable);
+
     Page<Product> searchAllByProductNameAndByProductFamilyNameAndCategoryName(String productName, String familyName,
                                                                               String categoryName, Pageable pageable);
     Page<Product> searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandName(String productName, String familyName,

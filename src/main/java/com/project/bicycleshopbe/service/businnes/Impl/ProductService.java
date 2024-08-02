@@ -6,8 +6,6 @@ import com.project.bicycleshopbe.model.business.ProductImage;
 import com.project.bicycleshopbe.repository.business.IProductRepository;
 import com.project.bicycleshopbe.service.businnes.IProductService;
 import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +17,6 @@ import java.util.List;
 
 @Service
 public class ProductService implements IProductService {
-    private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     @Autowired
     private IProductRepository productRepository;
 
@@ -29,13 +26,8 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<Product> searchAllByName(String name, Pageable pageable) {
-        return productRepository.searchAllByProductNameContaining(name, pageable);
-    }
-
-    @Override
-    public Page<Product> searchAllByCategoryNameContaining(String categoryName, Pageable pageable) {
-        return productRepository.searchAllByProductFamilyCategoryCategoryNameContaining(categoryName, pageable);
+    public Page<Product> searchAllByProductCodeOrProductNameOrBrandName(String productCode, String productName, String brandName, Pageable pageable) {
+        return productRepository.searchAllByProductCodeContainingOrProductNameContainingOrBrandBrandNameContaining(productCode, productName, brandName, pageable);
     }
 
     @Override
