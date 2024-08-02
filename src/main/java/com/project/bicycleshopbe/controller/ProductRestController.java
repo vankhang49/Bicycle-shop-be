@@ -45,7 +45,13 @@ public class ProductRestController {
         if (page < 0) {
             page = 0;
         }
-        Page<Product> products = productService.searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandNameAndPriceBetween(nameSearch, familyName, categoryName, brandName, priceBefore, priceAfter, PageRequest.of(page, 12));
+
+        nameSearch = "%" + nameSearch + "%";
+        categoryName = "%" + categoryName + "%";
+        brandName = "%" + brandName + "%";
+        familyName = "%" + familyName + "%";
+
+        Page<Product> products = productService.searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandNameAndPriceBetween(nameSearch, categoryName, brandName, familyName, priceBefore, priceAfter, PageRequest.of(page, 12));
         if (products.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

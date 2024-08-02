@@ -69,7 +69,7 @@ public class ShoppingCartRestController {
     }
 
     @PostMapping("/pay")
-    public ResponseEntity<?> saveBill(@RequestParam(name = "userId") Long userId  , @RequestBody Bill bill) {
+    public ResponseEntity<?> saveBill(@RequestParam(name = "userId", defaultValue = "0") Long userId  , @RequestBody Bill bill) {
         System.out.println(bill);
         AppUser user = null;
         if (userId != null) {

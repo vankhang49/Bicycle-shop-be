@@ -48,4 +48,9 @@ public class BillService implements IBillService {
     public void remove(Long id) {
         billRepository.deleteById(id);
     }
+
+    @Override
+    public void updateReceivedBill(Long billId) {
+        billRepository.updateReceivedBill(billId);
+    }
 }

@@ -50,8 +50,8 @@ public class SecurityConfiguration {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000", "http://192.168.55.102:3000/",
-                                "http://192.168.1.97:3000" ,"https://vankhang49.github.io/")
+                        .allowedOrigins("http://localhost:3000", "http://192.168.55.102:3000",
+                                "https://bicycle-shop-fe.vercel.app" ,"https://vankhang49.github.io")
                         .allowCredentials(true)
                         .allowedMethods("*")
                         .allowedHeaders("*");

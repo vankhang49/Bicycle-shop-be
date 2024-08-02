@@ -11,4 +11,6 @@ public interface IBillService extends IGenerateService<Bill> {
     Page<Bill> searchAllByUserCodeAndFullName(String userCode, String fullName, Pageable pageable);
 
     List<Bill> searchAllByUserId(Long userId);
+
+    void updateReceivedBill(Long billId);
 }

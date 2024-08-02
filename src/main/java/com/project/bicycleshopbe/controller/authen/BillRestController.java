@@ -46,4 +46,14 @@ public class BillRestController {
         }
         return ResponseEntity.ok(bill);
     }
+
+    @PatchMapping("/receivedBill/{billId}")
+    public ResponseEntity<?> updateReceivedBill(@PathVariable("billId") Long billId) {
+        Bill bill = billService.findById(billId);
+        if (bill == null) {
+            return ResponseEntity.noContent().build();
+        }
+        billService.updateReceivedBill(billId);
+        return ResponseEntity.status(200).body("Đã xác nhận!");
+    }
 }
