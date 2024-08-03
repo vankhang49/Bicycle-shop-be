@@ -18,13 +18,13 @@ public class BillRestController {
     private BillService billService;
 
     @GetMapping
-    public ResponseEntity<?> getAllBills(@RequestParam(name = "userCode", defaultValue = "")String userCode,
+    public ResponseEntity<?> getAllBills(@RequestParam(name = "billCode", defaultValue = "")String billCode,
                                          @RequestParam(name = "fullName", defaultValue = "") String fullName,
                                          @RequestParam(name = "page", defaultValue = "0") Integer page
     ) {
-        Page<Bill> bills = billService.searchAllByUserCodeAndFullName(userCode, fullName, PageRequest.of(page, 10));
+        Page<Bill> bills = billService.searchAllByBillCodeAndFullName(billCode, fullName, PageRequest.of(page, 10));
         if (bills.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(404).body("Không có đơn hàng nào được tìm thấy!");
         }
         return ResponseEntity.ok(bills);
     }
@@ -33,7 +33,7 @@ public class BillRestController {
     public ResponseEntity<?> getAllBillsByUserId(@PathVariable("userId") Long userId) {
         List<Bill> bills = billService.searchAllByUserId(userId);
         if (bills.isEmpty()) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(404).body("Không có đơn hàng nào được tìm thấy!");
         }
         return ResponseEntity.ok(bills);
     }

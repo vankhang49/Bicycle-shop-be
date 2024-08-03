@@ -21,6 +21,9 @@ public class Bill {
     @Column(name = "bill_id")
     private Long id;
 
+    @Column(name = "bill_code")
+    private String billCode;
+
     @Column(name = "customer_name")
     private String customerName;
 

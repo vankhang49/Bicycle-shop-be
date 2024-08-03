@@ -25,8 +25,8 @@ public class BillService implements IBillService {
     }
 
     @Override
-    public Page<Bill> searchAllByUserCodeAndFullName(String userCode, String fullName, Pageable pageable) {
-        return billRepository.searchAllByAppUserUserCodeContainingAndAppUserFullNameContaining(userCode, fullName, pageable);
+    public Page<Bill> searchAllByBillCodeAndFullName(String billCode, String fullName, Pageable pageable) {
+        return billRepository.searchAllByBillCodeContainingAndAppUserFullNameContaining(billCode, fullName, pageable);
     }
 
     @Override

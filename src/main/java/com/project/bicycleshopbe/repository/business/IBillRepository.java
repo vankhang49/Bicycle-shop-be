@@ -15,9 +15,9 @@ import java.util.List;
 @Repository
 public interface IBillRepository extends JpaRepository<Bill, Long> {
 
-    Page<Bill> searchAllByAppUserUserCodeContainingAndAppUserFullNameContaining(String userCode,
-                                                                                String fullName,
-                                                                                Pageable pageable);
+    Page<Bill> searchAllByBillCodeContainingAndAppUserFullNameContaining(String billCode,
+                                                                         String fullName,
+                                                                         Pageable pageable);
 
     List<Bill> searchByAppUserUserIdOrderByPaidDescDateCreateDesc(Long userId);
 

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface IBillService extends IGenerateService<Bill> {
-    Page<Bill> searchAllByUserCodeAndFullName(String userCode, String fullName, Pageable pageable);
+    Page<Bill> searchAllByBillCodeAndFullName(String userCode, String fullName, Pageable pageable);
 
     List<Bill> searchAllByUserId(Long userId);
 

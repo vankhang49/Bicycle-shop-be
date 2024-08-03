@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -39,7 +40,7 @@ public class AppUser {
     private String userCode;
 
     @Column(name = "date_create")
-    private LocalDate dateCreate;
+    private LocalDateTime dateCreate;
 
     @Column(name = "full_name", length = 50)
     private String fullName;
@@ -68,4 +69,22 @@ public class AppUser {
     @Column(name = "enabled", length = 1)
     private Boolean enabled;
 
+    public AppUser(String email, String password, Set<AppRole> roles, String userCode, LocalDateTime dateCreate,
+                   String fullName, Integer gender, LocalDate dateOfBirth, String phoneNumber, String address,
+                   Boolean accountNonExpired, Boolean accountNonLocked, Boolean credentialsNonExpired, Boolean enabled) {
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+        this.userCode = userCode;
+        this.dateCreate = dateCreate;
+        this.fullName = fullName;
+        this.gender = gender;
+        this.dateOfBirth = dateOfBirth;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.accountNonExpired = accountNonExpired;
+        this.accountNonLocked = accountNonLocked;
+        this.credentialsNonExpired = credentialsNonExpired;
+        this.enabled = enabled;
+    }
 }

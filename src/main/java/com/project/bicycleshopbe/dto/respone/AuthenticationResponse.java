@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -35,7 +36,7 @@ public class AuthenticationResponse {
 
     private String email;
 
-    private LocalDate dateCreate;
+    private LocalDateTime dateCreate;
 
     private String fullName;
 

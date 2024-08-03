@@ -1,9 +1,11 @@
 package com.project.bicycleshopbe.repository.permission;
 
 import com.project.bicycleshopbe.model.permission.AppUser;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,4 +18,30 @@ public interface IUserRepository extends JpaRepository<AppUser, Long> {
             "WHERE (u.userCode LIKE %:userCode% or u.fullName LIKE %:fullName%) AND r.roleId = 4")
     Page<AppUser> searchAllByUserCodeOrFullNameAndRoleId(@Param("userCode") String userCode, @Param("fullName") String fullName, Pageable pageable);
 
+    @Query("SELECT DISTINCT u FROM AppUser u JOIN u.roles r " +
+            "WHERE (u.userCode LIKE %:userCode% or u.fullName LIKE %:fullName%) AND r.roleId != 4")
+    Page<AppUser> searchAllEmployeeByUserCodeOrFullNameAndRoleId(@Param("userCode") String userCode, @Param("fullName") String fullName, Pageable pageable);
+
+    /**
+     * Disable an AppUser entity by user ID.
+     * <p>
+     * @param userId the user ID to disable
+     */
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE app_users SET account_non_expired = 0, account_non_locked = 0, credentials_non_expired = 0, " +
+            "enabled = 0 WHERE user_id = :userId", nativeQuery = true)
+    void disableUser(@Param("userId") Long userId);
+
+
+    /**
+     * Enable an AppUser entity by user ID.
+     * <p>
+     * @param userId the user ID to enable
+     */
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE app_users SET account_non_expired = 1, account_non_locked = 1, credentials_non_expired = 1, " +
+            "enabled = 1 WHERE user_id = :userId", nativeQuery = true)
+    void enableUser(@Param("userId") Long userId);
 }

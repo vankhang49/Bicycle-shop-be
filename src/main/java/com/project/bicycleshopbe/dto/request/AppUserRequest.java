@@ -1,5 +1,6 @@
 package com.project.bicycleshopbe.dto.request;
 
+import com.project.bicycleshopbe.model.permission.AppRole;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +12,7 @@ import org.springframework.validation.Validator;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Set;
 
 /**
  * Represents a request to create or update an AppUser.
@@ -30,6 +32,8 @@ public class AppUserRequest implements Validator {
     private String email;
 
     private String password;
+
+    private Set<AppRole> roles;
 
     @NotBlank(message = "Mã nhân viên không được để trống!")
     @Pattern(regexp = "^NV\\d{4}$", message="Mã nhân viên phải được bắt đầu bằng NV và kết thúc với 4 chữ số!")
