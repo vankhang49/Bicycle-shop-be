@@ -31,7 +31,7 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())  // Sử dụng phương pháp mới để vô hiệu hóa CSRF
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**","/api/public/**","/api/auth/authenticate", "/api/auth/users/roles").permitAll()
-                        .requestMatchers("/api/auth/shopping-cart/pay").permitAll()
+                        .requestMatchers("/api/auth/shopping-cart/pay", "/api/auth/advertisements/public").permitAll()
                         .requestMatchers("/api/auth/**").authenticated()
                         .anyRequest().authenticated()
                 )
@@ -50,8 +50,8 @@ public class SecurityConfiguration {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000", "http://192.168.55.102:3000",
-                                "https://bicycle-shop-fe.vercel.app" ,"https://vankhang49.github.io")
+                        .allowedOrigins("http://localhost:3000/", "http://192.168.100.236:3000",
+                                "https://bicycle-shop-fe.vercel.app/" ,"https://vankhang49.github.io")
                         .allowCredentials(true)
                         .allowedMethods("*")
                         .allowedHeaders("*");

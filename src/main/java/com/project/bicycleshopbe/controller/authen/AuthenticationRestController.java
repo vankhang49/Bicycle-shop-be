@@ -44,13 +44,14 @@ public class AuthenticationRestController {
             // Thiết lập cookie HTTP-only
             Cookie cookie = new Cookie("token", authResponse.getToken());
             cookie.setHttpOnly(true);
-            // cookie.setSecure(true); // Chỉ gửi cookie qua HTTPS trong môi trường sản xuất
+//             cookie.setSecure(true); // Chỉ gửi cookie qua HTTPS trong môi trường sản xuất
             cookie.setPath("/");
-            cookie.setMaxAge(60 * 60); // Thời gian tồn tại của cookie (1 ngày)
+            cookie.setMaxAge(2 * 60 * 60); // Thời gian tồn tại của cookie (1 ngày)
             response.addCookie(cookie);
 
             Cookie newRefreshTokenCookie = new Cookie("rft", authResponse.getRefreshToken());
             newRefreshTokenCookie.setHttpOnly(true);
+//            cookie.setSecure(true);
             newRefreshTokenCookie.setPath("/");
             cookie.setMaxAge(24 * 60 * 60);
             response.addCookie(newRefreshTokenCookie);
@@ -65,14 +66,14 @@ public class AuthenticationRestController {
         // Thiết lập cookie HTTP-only
         Cookie cookie = new Cookie("token", null);
         cookie.setHttpOnly(true);
-        // cookie.setSecure(true); // Chỉ gửi cookie qua HTTPS trong môi trường sản xuất
+//         cookie.setSecure(true); // Chỉ gửi cookie qua HTTPS trong môi trường sản xuất
         cookie.setPath("/");
         cookie.setMaxAge(0); // Thời gian tồn tại của cookie (0)
         response.addCookie(cookie);
 
         Cookie newRefreshTokenCookie = new Cookie("rft", null);
         newRefreshTokenCookie.setHttpOnly(true);
-        // cookie.setSecure(true);
+//         cookie.setSecure(true);
         newRefreshTokenCookie.setPath("/");
         newRefreshTokenCookie.setMaxAge(0);
         response.addCookie(newRefreshTokenCookie);

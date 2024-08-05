@@ -6,6 +6,7 @@ import com.project.bicycleshopbe.service.businnes.IBillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public class BillService implements IBillService {
     }
 
     @Override
-    public List<Bill> searchAllByUserId(Long userId) {
-        return billRepository.searchByAppUserUserIdOrderByPaidDescDateCreateDesc(userId);
+    public Slice<Bill> searchAllByUserId(Long userId, Pageable pageable) {
+        return billRepository.searchByAppUserUserIdOrderByPaidDescDateCreateDesc(userId, pageable);
     }
 
     @Override

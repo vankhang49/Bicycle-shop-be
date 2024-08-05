@@ -10,12 +10,17 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "pricings")
+@Table(name = "pricings",
+        uniqueConstraints = { //
+                @UniqueConstraint(name = "PRICINGS_UK", columnNames = "price_code") })
 public class Pricing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "price_id")
     private Long priceId;
+
+    @Column(name = "price_code")
+    private String priceCode;
 
     @Column(name = "price_name")
     private String priceName;

@@ -64,43 +64,46 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        if(jwt == null && rft == null) {
+        if(rft == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            email = jwtService.extractEmail(jwt);
-            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null){
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
-                Optional<RefreshToken> refreshToken = refreshTokenService.findByToken(rft);
-                if (refreshToken.isPresent()) {
-                    RefreshToken refresh = refreshToken.get();
-                    if (jwtService.isTokenValid(jwt, userDetails)){
-                        setAuthentication(request, userDetails);
-                    } else {
-                        if (refreshTokenService.isTokenExpired(refreshToken.get())) {
-                            System.out.println("remake token");
-                            String newAccessToken = jwtService.generateToken(userDetails);
-                            refresh.setExpiryDate(Instant.now().plusMillis(86400000));
-                            refreshTokenService.updateRefreshToken(refresh);
-
-                            Cookie newAccessTokenCookie = new Cookie("token", newAccessToken);
-                            newAccessTokenCookie.setHttpOnly(true);
-                            newAccessTokenCookie.setPath("/");
-                            newAccessTokenCookie.setMaxAge(60 * 60);
-                            response.addCookie(newAccessTokenCookie);
-
-                            Cookie newRefreshTokenCookie = new Cookie("rft", refresh.getToken());
-                            newRefreshTokenCookie.setHttpOnly(true);
-                            newRefreshTokenCookie.setPath("/");
-                            newRefreshTokenCookie.setMaxAge(24 * 60 * 60);
-                            response.addCookie(newRefreshTokenCookie);
-
+            if (jwt != null) {
+                email = jwtService.extractEmail(jwt);
+                if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
+                    Optional<RefreshToken> refreshToken = refreshTokenService.findByToken(rft);
+                    if (refreshToken.isPresent()) {
+                        RefreshToken refresh = refreshToken.get();
+                        if (jwtService.isTokenValid(jwt, userDetails)) {
                             setAuthentication(request, userDetails);
-                        }
-                        else {
-                            refreshTokenService.removeRefreshTokenByToken(refresh.getToken());
+                        } else {
+                            if (refreshTokenService.isTokenExpired(refreshToken.get())) {
+                                System.out.println("remake token");
+                                String newAccessToken = jwtService.generateToken(userDetails);
+                                refresh.setExpiryDate(Instant.now().plusMillis(86400000));
+                                refreshTokenService.updateRefreshToken(refresh);
+
+                                Cookie newAccessTokenCookie = new Cookie("token", newAccessToken);
+                                newAccessTokenCookie.setHttpOnly(true);
+//                            newAccessTokenCookie.setSecure(true);
+                                newAccessTokenCookie.setPath("/");
+                                newAccessTokenCookie.setMaxAge(2 * 60 * 60);
+                                response.addCookie(newAccessTokenCookie);
+
+                                Cookie newRefreshTokenCookie = new Cookie("rft", refresh.getToken());
+                                newRefreshTokenCookie.setHttpOnly(true);
+//                            newRefreshTokenCookie.setSecure(true);
+                                newRefreshTokenCookie.setPath("/");
+                                newRefreshTokenCookie.setMaxAge(24 * 60 * 60);
+                                response.addCookie(newRefreshTokenCookie);
+
+                                setAuthentication(request, userDetails);
+                            } else {
+                                refreshTokenService.removeRefreshTokenByToken(refresh.getToken());
+                            }
                         }
                     }
                 }

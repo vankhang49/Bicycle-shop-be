@@ -45,6 +45,9 @@ public class AppUser {
     @Column(name = "full_name", length = 50)
     private String fullName;
 
+    @Column(name = "avatar")
+    private String avatar;
+
     @Column(name = "gender")
     private Integer gender;
 

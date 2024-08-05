@@ -4,6 +4,7 @@ import com.project.bicycleshopbe.model.business.Bill;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,7 +20,7 @@ public interface IBillRepository extends JpaRepository<Bill, Long> {
                                                                          String fullName,
                                                                          Pageable pageable);
 
-    List<Bill> searchByAppUserUserIdOrderByPaidDescDateCreateDesc(Long userId);
+    Slice<Bill> searchByAppUserUserIdOrderByPaidDescDateCreateDesc(Long userId, Pageable pageable);
 
     @Modifying
     @Transactional
