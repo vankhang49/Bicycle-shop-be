@@ -1,10 +1,9 @@
-package com.project.bicycleshopbe.controller;
+package com.project.bicycleshopbe.controller.publics;
 
 import com.project.bicycleshopbe.model.business.Color;
 import com.project.bicycleshopbe.service.businnes.Impl.ColorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

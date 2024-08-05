@@ -1,4 +1,4 @@
-package com.project.bicycleshopbe.controller;
+package com.project.bicycleshopbe.controller.publics;
 
 import com.project.bicycleshopbe.model.business.Category;
 import com.project.bicycleshopbe.service.businnes.ICategoryService;

@@ -26,10 +26,10 @@ public interface IProductRepository extends JpaRepository<Product, Long> {
             "join brands b on p.brand_id = b.brand_id " +
             "join product_families f on p.family_id = f.family_id " +
             "join categories ca on b.category_id = ca.category_id " +
-            "where p.product_name like :productName and " +
-            "ca.category_name like :categoryName and " +
-            "b.brand_name like :brandName and " +
-            "f.family_name like :familyName and " +
+            "where p.product_name like %:productName% and " +
+            "ca.category_name like %:categoryName% and " +
+            "b.brand_name like %:brandName% and " +
+            "f.family_name like %:familyName% and " +
             "pr.price between :priceBefore and :priceAfter", nativeQuery = true)
     Page<Product> searchAllByProductNameAndCategoryNameAndBrandNameAndFamilyNameAndPriceBetween(@Param("productName") String productName,
             @Param("categoryName") String categoryName, @Param("brandName") String brandName,

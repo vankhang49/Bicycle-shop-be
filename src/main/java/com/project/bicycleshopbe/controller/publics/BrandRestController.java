@@ -1,4 +1,4 @@
-package com.project.bicycleshopbe.controller;
+package com.project.bicycleshopbe.controller.publics;
 
 import com.project.bicycleshopbe.model.business.Brand;
 import com.project.bicycleshopbe.service.businnes.IBrandService;

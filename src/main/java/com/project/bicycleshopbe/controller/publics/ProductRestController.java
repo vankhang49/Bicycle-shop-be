@@ -1,4 +1,4 @@
-package com.project.bicycleshopbe.controller;
+package com.project.bicycleshopbe.controller.publics;
 
 import com.project.bicycleshopbe.dto.ProductAndPriceOfProductDTO;
 import com.project.bicycleshopbe.model.business.Pricing;
@@ -8,6 +8,7 @@ import com.project.bicycleshopbe.service.businnes.Impl.ProductImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,12 +47,17 @@ public class ProductRestController {
             page = 0;
         }
 
-        nameSearch = "%" + nameSearch + "%";
-        categoryName = "%" + categoryName + "%";
-        brandName = "%" + brandName + "%";
-        familyName = "%" + familyName + "%";
-
         Page<Product> products = productService.searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandNameAndPriceBetween(nameSearch, categoryName, brandName, familyName, priceBefore, priceAfter, PageRequest.of(page, 12));
+        if (products.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/new-products")
+    public ResponseEntity<Page<Product>> getAllProducts() {
+        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "date_create"));
+        Page<Product> products = productService.searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandNameAndPriceBetween("", "", "", "", 0D, 9999999999D, pageRequest);
         if (products.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

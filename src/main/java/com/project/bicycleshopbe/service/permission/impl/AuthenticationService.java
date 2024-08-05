@@ -2,19 +2,25 @@ package com.project.bicycleshopbe.service.permission.impl;
 
 import com.project.bicycleshopbe.dto.UserInforUserDetails;
 import com.project.bicycleshopbe.dto.request.AuthenticationRequest;
+import com.project.bicycleshopbe.dto.request.RegisterRequest;
 import com.project.bicycleshopbe.dto.request.UpdatePasswordRequest;
 import com.project.bicycleshopbe.dto.respone.AuthenticationResponse;
+import com.project.bicycleshopbe.model.permission.AppRole;
 import com.project.bicycleshopbe.model.permission.AppUser;
 import com.project.bicycleshopbe.repository.permission.IRoleRepository;
 import com.project.bicycleshopbe.repository.permission.IUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Service implementation for managing user authentication and registration.
@@ -25,6 +31,7 @@ import java.time.LocalDate;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
     @Autowired
     private IUserRepository userRepository;
 
@@ -70,6 +77,53 @@ public class AuthenticationService {
         } catch (Exception e) {
             return AuthenticationResponse.builder()
                     .message("Đăng nhập thất bại")
+                    .statusCode(500).build();
+        }
+    }
+
+    /**
+     * Authenticates a user with the provided login credentials.
+     *
+     * @param request The authentication request containing login credentials.
+     * @return An {@link AuthenticationResponse} containing the JWT token and authentication status.
+     */
+    public AuthenticationResponse register(RegisterRequest request) {
+        try {
+            var user = userRepository.findByEmail(request.getNewEmail());
+            if (user != null) {
+                return AuthenticationResponse.builder()
+                        .statusCode(400)
+                        .message("Tài khoản đã tồn tại")
+                        .build();
+            }
+            AppUser appUser = new AppUser();
+            appUser.setEmail(request.getNewEmail());
+            System.out.println(appUser.getEmail());
+            appUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            appUser.setDateCreate(LocalDateTime.now());
+            appUser.setAccountNonExpired(true);
+            appUser.setAccountNonLocked(true);
+            appUser.setCredentialsNonExpired(true);
+            appUser.setEnabled(true);
+            Set<AppRole> roles = new HashSet<>();
+            AppRole role = roleRepository.findByRoleName("ROLE_CUSTOMER");
+            roles.add(role);
+            appUser.setRoles(roles);
+            appUser = userRepository.save(appUser);
+            UserInforUserDetails userDetails = new UserInforUserDetails(appUser, roles);
+            var jwtToken = jwtService.generateToken(userDetails);
+            var refreshToken = refreshTokenService.createRefreshToken(request.getNewEmail());
+            return AuthenticationResponse.builder()
+                    .statusCode(200)
+                    .token(jwtToken)
+                    .refreshToken(refreshToken.getToken())
+                    .userId(appUser.getUserId())
+                    .fullName(appUser.getFullName())
+                    .message("Đăng ký thành công!!!")
+                    .build();
+        } catch (Exception e) {
+            return AuthenticationResponse.builder()
+                    .message("Đăng ký thất bại")
                     .statusCode(500).build();
         }
     }

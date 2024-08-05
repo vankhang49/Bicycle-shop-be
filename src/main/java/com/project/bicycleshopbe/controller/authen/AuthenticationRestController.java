@@ -1,6 +1,7 @@
 package com.project.bicycleshopbe.controller.authen;
 
 import com.project.bicycleshopbe.dto.request.AuthenticationRequest;
+import com.project.bicycleshopbe.dto.request.RegisterRequest;
 import com.project.bicycleshopbe.dto.request.UpdatePasswordRequest;
 import com.project.bicycleshopbe.dto.respone.AuthenticationResponse;
 import com.project.bicycleshopbe.model.permission.AppRole;
@@ -39,6 +40,32 @@ public class AuthenticationRestController {
             @RequestBody AuthenticationRequest request, HttpServletResponse response
     ){
         AuthenticationResponse authResponse = authenticationService.authentication(request);
+
+        if (authResponse.getStatusCode() == 200) {
+            // Thiết lập cookie HTTP-only
+            Cookie cookie = new Cookie("token", authResponse.getToken());
+            cookie.setHttpOnly(true);
+//             cookie.setSecure(true); // Chỉ gửi cookie qua HTTPS trong môi trường sản xuất
+            cookie.setPath("/");
+            cookie.setMaxAge(2 * 60 * 60); // Thời gian tồn tại của cookie (1 ngày)
+            response.addCookie(cookie);
+
+            Cookie newRefreshTokenCookie = new Cookie("rft", authResponse.getRefreshToken());
+            newRefreshTokenCookie.setHttpOnly(true);
+//            cookie.setSecure(true);
+            newRefreshTokenCookie.setPath("/");
+            cookie.setMaxAge(24 * 60 * 60);
+            response.addCookie(newRefreshTokenCookie);
+            System.out.println("call finish");
+        }
+        return ResponseEntity.status(authResponse.getStatusCode()).body(authResponse);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(
+            @RequestBody RegisterRequest request, HttpServletResponse response
+    ){
+        AuthenticationResponse authResponse = authenticationService.register(request);
 
         if (authResponse.getStatusCode() == 200) {
             // Thiết lập cookie HTTP-only

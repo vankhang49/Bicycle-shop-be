@@ -1,4 +1,4 @@
-package com.project.bicycleshopbe.controller;
+package com.project.bicycleshopbe.controller.publics;
 
 import com.project.bicycleshopbe.model.business.Bill;
 import com.project.bicycleshopbe.model.business.BillItem;
