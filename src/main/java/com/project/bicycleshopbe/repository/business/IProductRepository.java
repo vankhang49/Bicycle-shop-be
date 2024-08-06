@@ -36,4 +36,8 @@ public interface IProductRepository extends JpaRepository<Product, Long> {
             @Param("familyName") String familyName, @Param("priceBefore") Double priceBefore,
             @Param("priceAfter") Double priceAfter, Pageable pageable);
 
+    @Query(value = "SELECT p.* from products p JOIN pricings pr ON p.product_id = pr.product_id " +
+            "WHERE pr.price_id = :priceId", nativeQuery = true)
+    Product getProductByPriceId(@Param("priceId") Long priceId);
+
 }

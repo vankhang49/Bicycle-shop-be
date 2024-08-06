@@ -23,4 +23,6 @@ public interface IProductService extends IGenerateService<Product> {
     void saveProductWithDetails(Product product, List<ProductImage> productImages, List<Pricing> pricingList);
 
     void updateProduct(Product product);
+
+    Product getProductByPriceId(Long priceId);
 }
