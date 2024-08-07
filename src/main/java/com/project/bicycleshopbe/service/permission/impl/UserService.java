@@ -103,8 +103,6 @@ public class UserService implements IUserService {
         String password = passwordEncoder.encode(appUserRequest.getPassword());
         String userCode = appUserRequest.getUserCode();
         LocalDateTime dateCreate = LocalDateTime.now();
-        String backgroundImage = appUserRequest.getBackgroundImage();
-        String avatar = appUserRequest.getAvatar();
         String fullName = appUserRequest.getFullName();
         Integer gender = appUserRequest.getGender();
         LocalDate dateOfBirth = appUserRequest.getDateOfBirth();
@@ -149,13 +147,10 @@ public class UserService implements IUserService {
                     .build();
         }
         AppUser appUser = user.get();
-        String email = appUserRequest.getEmail();
         if (appUserRequest.getPassword() != null || !appUserRequest.getPassword().isEmpty()) {
             appUser.setPassword(passwordEncoder.encode(appUserRequest.getPassword()));
         }
         appUser.setUserCode(appUserRequest.getUserCode());
-        String backgroundImage = appUserRequest.getBackgroundImage();
-        String avatar = appUserRequest.getAvatar();
         appUser.setFullName(appUserRequest.getFullName());
         appUser.setGender(appUserRequest.getGender());
         appUser.setDateOfBirth(appUserRequest.getDateOfBirth());

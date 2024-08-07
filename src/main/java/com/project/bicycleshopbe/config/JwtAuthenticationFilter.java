@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,6 +52,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String rft = null;
         final String email;
 
+        if (authHeader == null || !authHeader.startsWith("Bearer")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -65,51 +69,51 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        if(rft == null) {
+        if (rft == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            if (jwt != null) {
-                if(authHeader == null || !authHeader.startsWith("Bearer")){
-                    filterChain.doFilter(request, response);
-                    return;
-                }
-                email = jwtService.extractEmail(jwt);
-                if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
-                    Optional<RefreshToken> refreshToken = refreshTokenService.findByToken(rft);
-                    if (refreshToken.isPresent()) {
-                        RefreshToken refresh = refreshToken.get();
-                        if (jwtService.isTokenValid(jwt, userDetails)) {
-                            setAuthentication(request, userDetails);
-                        } else {
-                            if (refreshTokenService.isTokenExpired(refreshToken.get())) {
-                                System.out.println("remake token");
-                                String newAccessToken = jwtService.generateToken(userDetails);
-                                refresh.setExpiryDate(Instant.now().plusMillis(86400000));
-                                refreshTokenService.updateRefreshToken(refresh);
+            Optional<RefreshToken> refreshToken = refreshTokenService.findByToken(rft);
+            if (refreshToken.isEmpty()) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
-                                Cookie newAccessTokenCookie = new Cookie("token", newAccessToken);
-                                newAccessTokenCookie.setHttpOnly(true);
-//                            newAccessTokenCookie.setSecure(true);
-                                newAccessTokenCookie.setPath("/");
-                                newAccessTokenCookie.setMaxAge(2 * 60 * 60);
-                                response.addCookie(newAccessTokenCookie);
+            RefreshToken refresh = refreshToken.get();
+            email = refresh.getUser().getEmail();
 
-                                Cookie newRefreshTokenCookie = new Cookie("rft", refresh.getToken());
-                                newRefreshTokenCookie.setHttpOnly(true);
-//                            newRefreshTokenCookie.setSecure(true);
-                                newRefreshTokenCookie.setPath("/");
-                                newRefreshTokenCookie.setMaxAge(24 * 60 * 60);
-                                response.addCookie(newRefreshTokenCookie);
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                                setAuthentication(request, userDetails);
-                            } else {
-                                refreshTokenService.removeRefreshTokenByToken(refresh.getToken());
-                            }
-                        }
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
+
+                if (jwtService.isTokenValid(jwt)) {
+                    setAuthentication(request, userDetails);
+                } else {
+                    if (refreshTokenService.checkAndDeleteExpiredToken(refreshToken.get())) {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        return;
+                    } else {
+                        // Tạo mới access token
+                        System.out.println("remake");
+                        String newAccessToken = jwtService.generateToken(userDetails);
+                        refresh.setExpiryDate(Instant.now().plusMillis(86400000));
+                        refreshTokenService.updateRefreshToken(refresh);
+
+                        Cookie newAccessTokenCookie = new Cookie("token", newAccessToken);
+                        newAccessTokenCookie.setHttpOnly(true);
+                        newAccessTokenCookie.setPath("/");
+                        newAccessTokenCookie.setMaxAge(2 * 60 * 60);
+                        response.addCookie(newAccessTokenCookie);
+
+                        Cookie newRefreshTokenCookie = new Cookie("rft", refresh.getToken());
+                        newRefreshTokenCookie.setHttpOnly(true);
+                        newRefreshTokenCookie.setPath("/");
+                        newRefreshTokenCookie.setMaxAge(24 * 60 * 60);
+                        response.addCookie(newRefreshTokenCookie);
+
+                        setAuthentication(request, userDetails);
                     }
                 }
             }

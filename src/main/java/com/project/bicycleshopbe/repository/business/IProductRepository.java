@@ -30,7 +30,8 @@ public interface IProductRepository extends JpaRepository<Product, Long> {
             "ca.category_name like %:categoryName% and " +
             "b.brand_name like %:brandName% and " +
             "f.family_name like %:familyName% and " +
-            "pr.price between :priceBefore and :priceAfter", nativeQuery = true)
+            "pr.price between :priceBefore and :priceAfter " +
+            "order by p.date_create desc", nativeQuery = true)
     Page<Product> searchAllByProductNameAndCategoryNameAndBrandNameAndFamilyNameAndPriceBetween(@Param("productName") String productName,
             @Param("categoryName") String categoryName, @Param("brandName") String brandName,
             @Param("familyName") String familyName, @Param("priceBefore") Double priceBefore,

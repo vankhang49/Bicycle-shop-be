@@ -34,7 +34,7 @@ public class ProductRestController {
     private ProductImageService productImageService;
 
     @GetMapping
-    public ResponseEntity<Page<Product>> getAllProducts(@RequestParam(name = "page", defaultValue = "0") int page,
+    public ResponseEntity<?> getAllProducts(@RequestParam(name = "page", defaultValue = "0") int page,
                                                         @RequestParam(name = "nameSearch", defaultValue = "") String nameSearch,
                                                         @RequestParam(name = "categoryName", defaultValue = "") String categoryName,
                                                         @RequestParam(name = "familyName", defaultValue = "") String familyName,
@@ -42,47 +42,56 @@ public class ProductRestController {
                                                         @RequestParam(name = "priceBefore", defaultValue = "0") Double priceBefore,
                                                         @RequestParam(name = "priceAfter", defaultValue = "9999999999") Double priceAfter
     ) {
-        System.out.println(nameSearch + "," + familyName + "," + categoryName + "," + brandName + "," + priceBefore + "," + priceAfter);
         if (page < 0) {
             page = 0;
         }
 
         Page<Product> products = productService.searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandNameAndPriceBetween(nameSearch, categoryName, brandName, familyName, priceBefore, priceAfter, PageRequest.of(page, 12));
         if (products.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.status(404).body("Không có sản phẩm nào được tìm thấy!");
         }
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/new-products")
-    public ResponseEntity<Page<Product>> getAllProducts() {
+    public ResponseEntity<?> getAllProducts() {
         PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "date_create"));
         Page<Product> products = productService.searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandNameAndPriceBetween("", "", "", "", 0D, 9999999999D, pageRequest);
         if (products.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.status(404).body("Không có sản phẩm nào được tìm thấy!");
         }
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/detail/{id}")
-    public ResponseEntity<ProductAndPriceOfProductDTO> getAllPriceOfProduct(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> getAllPriceOfProduct(@PathVariable(name = "id") Long id) {
         Product product = productService.findById(id);
         List<Pricing> pricingList = priceOfProductService.searchAllByProductId(id);
         if (product == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.status(404).body("Không tìm thấy thông tin sản phẩm!");
         }
         if (pricingList.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.status(404).body("Không tìm thấy thông tin sản phẩm!");
         }
         ProductAndPriceOfProductDTO productAndPriceOfProductDTO = new ProductAndPriceOfProductDTO(product, pricingList);
         return new ResponseEntity<>(productAndPriceOfProductDTO, HttpStatus.OK);
     }
 
+    @GetMapping("related-products")
+    public ResponseEntity<?> getAllRelatedProducts(@RequestParam(name = "categoryName", defaultValue = "") String categoryName
+    ){
+        Page<Product> products = productService.searchAllByProductFamilyCategoryCategoryNameContaining(categoryName, PageRequest.of(0,5));
+        if (products.isEmpty()) {
+            return ResponseEntity.status(404).body("Không có sản phẩm nào được tìm thấy!");
+        }
+        return ResponseEntity.ok(products);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findProductById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> findProductById(@PathVariable(name = "id") Long id) {
         Product product = productService.findById(id);
         if (product == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.status(404).body("Không tìm thấy thông tin sản phẩm!");
         }
         return new ResponseEntity<>(product, HttpStatus.OK);
     }

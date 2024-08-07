@@ -11,8 +11,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface IBillRepository extends JpaRepository<Bill, Long> {
 
@@ -20,7 +18,7 @@ public interface IBillRepository extends JpaRepository<Bill, Long> {
                                                                          String fullName,
                                                                          Pageable pageable);
 
-    Slice<Bill> searchByAppUserUserIdOrderByPaidDescDateCreateDesc(Long userId, Pageable pageable);
+    Slice<Bill> searchByAppUserUserIdOrderByPaidAscDateCreateDesc(Long userId, Pageable pageable);
 
     @Modifying
     @Transactional

@@ -11,6 +11,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.Set;
 
@@ -36,10 +37,8 @@ public class AppUserRequest implements Validator {
     private Set<AppRole> roles;
 
     @NotBlank(message = "Mã nhân viên không được để trống!")
-    @Pattern(regexp = "^NV\\d{4}$", message="Mã nhân viên phải được bắt đầu bằng NV và kết thúc với 4 chữ số!")
+    @Pattern(regexp = "^(NV|CU)\\d{4}$", message="Mã nhân viên phải được bắt đầu bằng NV và kết thúc với 4 chữ số!")
     private String userCode;
-
-    private String backgroundImage;
 
     private String avatar;
 
@@ -62,7 +61,7 @@ public class AppUserRequest implements Validator {
     @Length(min = 0, max = 255, message = "Địa chỉ không thể vượt quá tối đa 255 ký tự!")
     private String address;
 
-    private LocalDate dateCreate;
+    private LocalDateTime dateCreate;
 
     private Boolean accountNonExpired;
 

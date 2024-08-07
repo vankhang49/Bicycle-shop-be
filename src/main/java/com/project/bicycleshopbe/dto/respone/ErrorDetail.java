@@ -6,11 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * ErrorDetail class encapsulates error information for RESTful API responses.
- * It includes a main message and a map of field errors.
- * <p>Author: [QuyLV]</p>
- */
 public class ErrorDetail {
 
     private String message;

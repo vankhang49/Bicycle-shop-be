@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -35,7 +36,7 @@ public class BillRestController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getAllBillsByUserId(@PathVariable("userId") Long userId,
                                                  @RequestParam(name = "page", defaultValue = "0") int page) {
-        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "dateCreate"));
+        PageRequest pageRequest = PageRequest.of(page, 10);
         Slice<Bill> bills = billService.searchAllByUserId(userId, pageRequest);
         if (bills.isEmpty()) {
             return ResponseEntity.status(404).body("Không có đơn hàng nào được tìm thấy!");

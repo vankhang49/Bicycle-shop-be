@@ -42,6 +42,8 @@ public class AuthenticationResponse {
 
     private String userCode;
 
+    private String avatar;
+
     private Integer gender;
 
     private LocalDate dateOfBirth;

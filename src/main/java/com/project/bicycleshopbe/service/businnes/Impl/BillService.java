@@ -22,7 +22,7 @@ public class BillService implements IBillService {
 
     @Override
     public Slice<Bill> searchAllByUserId(Long userId, Pageable pageable) {
-        return billRepository.searchByAppUserUserIdOrderByPaidDescDateCreateDesc(userId, pageable);
+        return billRepository.searchByAppUserUserIdOrderByPaidAscDateCreateDesc(userId, pageable);
     }
 
     @Override

@@ -106,12 +106,10 @@ public class JwtService {
      * Validates the JWT token against user details.
      *
      * @param token       The JWT token.
-     * @param userDetails The user details.
      * @return True if the token is valid, false otherwise.
      */
-    public boolean isTokenValid(String token, UserDetails userDetails){
-        final String email = extractEmail(token);
-        return (email.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    public boolean isTokenValid(String token){
+        return !isTokenExpired(token);
     }
 
     /**
@@ -124,7 +122,7 @@ public class JwtService {
         try {
             return extractExpiration(token).before(new Date());
         } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
+            return true;
         }
     }
 

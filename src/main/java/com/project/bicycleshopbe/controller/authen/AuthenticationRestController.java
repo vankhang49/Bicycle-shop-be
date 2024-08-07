@@ -1,9 +1,8 @@
 package com.project.bicycleshopbe.controller.authen;
 
-import com.project.bicycleshopbe.dto.request.AuthenticationRequest;
-import com.project.bicycleshopbe.dto.request.RegisterRequest;
-import com.project.bicycleshopbe.dto.request.UpdatePasswordRequest;
+import com.project.bicycleshopbe.dto.request.*;
 import com.project.bicycleshopbe.dto.respone.AuthenticationResponse;
+import com.project.bicycleshopbe.dto.respone.ErrorDetail;
 import com.project.bicycleshopbe.model.permission.AppRole;
 import com.project.bicycleshopbe.model.permission.AppUser;
 import com.project.bicycleshopbe.service.permission.IUserService;
@@ -18,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,8 +63,19 @@ public class AuthenticationRestController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(
-            @RequestBody RegisterRequest request, HttpServletResponse response
+            @Validated @RequestBody RegisterRequest request, BindingResult bindingResult,
+            HttpServletResponse response
+
     ){
+        if (bindingResult.hasErrors()) {
+            ErrorDetail errors = new ErrorDetail("Validation errors");
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                System.out.println(error);
+                errors.addError(error.getField(), error.getDefaultMessage());
+            }
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+
         AuthenticationResponse authResponse = authenticationService.register(request);
 
         if (authResponse.getStatusCode() == 200) {
@@ -148,9 +159,41 @@ public class AuthenticationRestController {
             , BindingResult bindingResult){
         System.out.println("call update");
         if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getAllErrors());
+            ErrorDetail errors = new ErrorDetail("Validation errors");
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.addError(error.getField(), error.getDefaultMessage());
+            }
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
         AuthenticationResponse response = authenticationService.updatePassword(updatePasswordRequest);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
+    @PutMapping("/update-info")
+    public ResponseEntity<?> updateInformation(@Validated @RequestBody AppUserRequest appUserRequest
+            , BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ErrorDetail errors = new ErrorDetail("Validation errors");
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.addError(error.getField(), error.getDefaultMessage());
+            }
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+        AuthenticationResponse response = authenticationService.updateInfo(appUserRequest);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    /**
+     * Updates avatar and background image of a user.
+     *
+     * @param updateAvatarRequest The updated user information.
+     * @return A {@link ResponseEntity} containing the {@link AuthenticationResponse}.
+     */
+    @PreAuthorize("hasAnyRole('ROLE_SALESMAN', 'ROLE_WAREHOUSE', 'ROLE_MANAGER', 'ROLE_ADMIN')")
+    @PatchMapping("/update-image")
+    public ResponseEntity<?> updateAvatarUser(@RequestBody UpdateAvatarRequest updateAvatarRequest) {
+        AuthenticationResponse response = authenticationService.updateAvatarImage(updateAvatarRequest);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
 }

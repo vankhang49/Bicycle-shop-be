@@ -12,8 +12,7 @@ import java.util.List;
 public interface IProductService extends IGenerateService<Product> {
     Page<Product> searchAllByProductCodeOrProductNameOrBrandName(String productCode, String productName, String brandName, Pageable pageable);
 
-    Page<Product> searchAllByProductNameAndByProductFamilyNameAndCategoryName(String productName, String familyName,
-                                                                              String categoryName, Pageable pageable);
+    Page<Product> searchAllByProductFamilyCategoryCategoryNameContaining(String categoryName, Pageable pageable);
     Page<Product> searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandName(String productName, String familyName,
                                                                               String categoryName, String brandName, Pageable pageable);
     Page<Product> searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandNameAndPriceBetween(String productName,String categoryName,

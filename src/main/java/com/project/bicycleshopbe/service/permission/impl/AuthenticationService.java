@@ -1,9 +1,7 @@
 package com.project.bicycleshopbe.service.permission.impl;
 
 import com.project.bicycleshopbe.dto.UserInforUserDetails;
-import com.project.bicycleshopbe.dto.request.AuthenticationRequest;
-import com.project.bicycleshopbe.dto.request.RegisterRequest;
-import com.project.bicycleshopbe.dto.request.UpdatePasswordRequest;
+import com.project.bicycleshopbe.dto.request.*;
 import com.project.bicycleshopbe.dto.respone.AuthenticationResponse;
 import com.project.bicycleshopbe.model.permission.AppRole;
 import com.project.bicycleshopbe.model.permission.AppUser;
@@ -20,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -76,7 +76,7 @@ public class AuthenticationService {
                     .build();
         } catch (Exception e) {
             return AuthenticationResponse.builder()
-                    .message("Đăng nhập thất bại")
+                    .message("Email hoặc mật khẩu không đúng, vui lòng nhập lại!")
                     .statusCode(500).build();
         }
     }
@@ -98,8 +98,9 @@ public class AuthenticationService {
             }
             AppUser appUser = new AppUser();
             appUser.setEmail(request.getNewEmail());
-            System.out.println(appUser.getEmail());
             appUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            String userCode = createUserCode();
+            appUser.setUserCode(userCode);
             appUser.setDateCreate(LocalDateTime.now());
             appUser.setAccountNonExpired(true);
             appUser.setAccountNonLocked(true);
@@ -145,6 +146,7 @@ public class AuthenticationService {
                     .email(user.getEmail())
                     .userCode(user.getUserCode())
                     .dateCreate(user.getDateCreate())
+                    .avatar(user.getAvatar())
                     .dateOfBirth(user.getDateOfBirth())
                     .phoneNumber(user.getPhoneNumber())
                     .roles(user.getRoles())
@@ -211,6 +213,7 @@ public class AuthenticationService {
                 .email(user.getEmail())
                 .userCode(user.getUserCode())
                 .dateCreate(user.getDateCreate())
+                .avatar(user.getAvatar())
                 .dateOfBirth(user.getDateOfBirth())
                 .phoneNumber(user.getPhoneNumber())
                 .roles(user.getRoles())
@@ -218,6 +221,105 @@ public class AuthenticationService {
                 .gender(user.getGender())
                 .address(user.getAddress())
                 .token(jwtToken)
+                .build();
+    }
+
+    public AuthenticationResponse updateAvatarImage(UpdateAvatarRequest updateAvatarRequest) {
+        String email = updateAvatarRequest.getEmail();
+        AppUser user = userRepository.findByEmail(email);
+        if (user == null) {
+            return AuthenticationResponse.builder()
+                    .statusCode(404)
+                    .message("Người dùng không được tìm thấy!")
+                    .build();
+        }
+        if (updateAvatarRequest.getAvatar() == null ) {
+            return AuthenticationResponse.builder()
+                    .statusCode(400)
+                    .message("Cập nhật hình ảnh không thành công!").build();
+        }
+        try {
+            Long userId = user.getUserId();
+            String avatar = updateAvatarRequest.getAvatar();
+            userRepository.updateAvatarImage(avatar, userId);
+        } catch (Exception e) {
+            return AuthenticationResponse.builder()
+                    .statusCode(401)
+                    .message("Cập nhật hình ảnh thất bại")
+                    .error(e.getMessage())
+                    .build();
+        }
+        user.setAvatar(updateAvatarRequest.getAvatar());
+        return AuthenticationResponse.builder()
+                .statusCode(200)
+                .message("Cập nhật hình ảnh thành công!")
+                .userId(user.getUserId())
+                .email(user.getEmail())
+                .userCode(user.getUserCode())
+                .dateCreate(user.getDateCreate())
+                .avatar(user.getAvatar())
+                .dateOfBirth(user.getDateOfBirth())
+                .phoneNumber(user.getPhoneNumber())
+                .roles(user.getRoles())
+                .fullName(user.getFullName())
+                .gender(user.getGender())
+                .address(user.getAddress())
+                .build();
+    }
+
+    private String createUserCode() {
+        List<AppUser> users = userRepository.findAllByRoleCustomer();
+        String userCode = users.getLast().getUserCode();
+        int codeNumber = Integer.parseInt(userCode.substring(2)) + 1;
+        String userNewCode = "CU";
+        if (codeNumber < 10) {
+            userNewCode += "000" + codeNumber;
+        } else if (codeNumber < 100) {
+            userNewCode += "00" + codeNumber;
+        } else if (codeNumber < 1000) {
+            userNewCode += "0" + codeNumber;
+        } else {
+            userNewCode += codeNumber;
+        }
+        return userNewCode;
+    }
+
+    public AuthenticationResponse updateInfo(AppUserRequest appUserRequest) {
+        Optional<AppUser> user = userRepository.findById(appUserRequest.getUserId());
+        if (user.isEmpty()) {
+            return AuthenticationResponse.builder()
+                    .statusCode(400)
+                    .message("Không thể cập nhật nhân viên, lỗi hệ thống!")
+                    .build();
+        }
+        AppUser appUser = user.get();
+        appUser.setFullName(appUserRequest.getFullName());
+        appUser.setGender(appUserRequest.getGender());
+        appUser.setDateOfBirth(appUserRequest.getDateOfBirth());
+        appUser.setPhoneNumber(appUserRequest.getPhoneNumber());
+        appUser.setAddress(appUserRequest.getAddress());
+        try {
+            userRepository.save(appUser);
+        }catch (Exception e) {
+            return AuthenticationResponse.builder()
+                    .statusCode(400)
+                    .message("Không thể cập nhật nhân viên, lỗi hệ thống!")
+                    .build();
+        }
+        return AuthenticationResponse.builder()
+                .statusCode(200)
+                .message("Cập nhật thành công!")
+                .userId(appUser.getUserId())
+                .email(appUser.getEmail())
+                .userCode(appUser.getUserCode())
+                .dateCreate(appUser.getDateCreate())
+                .avatar(appUser.getAvatar())
+                .dateOfBirth(appUser.getDateOfBirth())
+                .phoneNumber(appUser.getPhoneNumber())
+                .roles(appUser.getRoles())
+                .fullName(appUser.getFullName())
+                .gender(appUser.getGender())
+                .address(appUser.getAddress())
                 .build();
     }
 }

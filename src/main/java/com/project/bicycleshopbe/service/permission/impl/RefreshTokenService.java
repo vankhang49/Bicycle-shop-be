@@ -36,12 +36,12 @@ public class RefreshTokenService {
         return refreshTokenRepository.findByToken(token);
     }
 
-    public boolean isTokenExpired(RefreshToken token){
+    public boolean checkAndDeleteExpiredToken(RefreshToken token){
         if(token.getExpiryDate().compareTo(Instant.now())<0){
             refreshTokenRepository.delete(token);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     public void removeRefreshTokenByUserId(Long userId){
