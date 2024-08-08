@@ -24,4 +24,4 @@ WORKDIR /app
 COPY --from=build /app/build/libs/bicycle-shop-BE-0.0.1-SNAPSHOT.jar drcomputer.jar
 EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","drcomputer.war"]
+ENTRYPOINT ["java","-jar","drcomputer.jar"]
