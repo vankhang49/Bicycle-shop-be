@@ -56,7 +56,6 @@ public class AuthenticationRestController {
             newRefreshTokenCookie.setPath("/");
             cookie.setMaxAge(24 * 60 * 60);
             response.addCookie(newRefreshTokenCookie);
-            System.out.println("call finish");
         }
         return ResponseEntity.status(authResponse.getStatusCode()).body(authResponse);
     }
