@@ -1,5 +1,5 @@
 # Build stage
-FROM gradle:7.6.1-jdk21 AS build
+FROM gradle:7.6.1-jdk17 AS build
 WORKDIR /app
 
 # Install JDK 21
