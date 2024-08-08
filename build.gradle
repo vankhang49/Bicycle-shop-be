@@ -53,3 +53,7 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+bootJar {
+    mainClass = 'com.project.bicycleshopbe.BicycleShopBeApplication'
+}
