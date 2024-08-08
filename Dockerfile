@@ -4,10 +4,13 @@ WORKDIR /app
 
 # Install JDK 21
 RUN apt-get update && \
-    apt-get install -y curl unzip zip && \
-    curl -s "https://get.sdkman.io" | bash && \
-    bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk install java 21.0.0-tem" && \
-    bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk use java 21.0.0-tem && java -version"
+    apt-get install -y wget && \
+    wget https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz && \
+    tar -xvf jdk-21_linux-x64_bin.tar.gz && \
+    mv jdk-21 /usr/local/ && \
+    update-alternatives --install /usr/bin/java java /usr/local/jdk-21/bin/java 1 && \
+    update-alternatives --set java /usr/local/jdk-21/bin/java && \
+    java -version
 
 COPY . .
 RUN gradle clean build -x test
