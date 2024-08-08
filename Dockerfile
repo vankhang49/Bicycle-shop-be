@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get install -y wget && \
     wget https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz && \
     tar -xvf jdk-21_linux-x64_bin.tar.gz && \
-    mv jdk-21 /usr/local/ && \
+    mv jdk-21.0.4 /usr/local/jdk-21 && \
     update-alternatives --install /usr/bin/java java /usr/local/jdk-21/bin/java 1 && \
     update-alternatives --set java /usr/local/jdk-21/bin/java && \
     java -version
