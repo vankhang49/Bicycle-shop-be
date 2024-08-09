@@ -12,6 +12,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -43,19 +44,24 @@ public class AuthenticationRestController {
 
         if (authResponse.getStatusCode() == 200) {
             // Thiết lập cookie HTTP-only
-            Cookie cookie = new Cookie("token", authResponse.getToken());
-            cookie.setHttpOnly(true);
-//             cookie.setSecure(true); // Chỉ gửi cookie qua HTTPS trong môi trường sản xuất
-            cookie.setPath("/");
-            cookie.setMaxAge(2 * 60 * 60); // Thời gian tồn tại của cookie (1 ngày)
-            response.addCookie(cookie);
+            ResponseCookie cookie = ResponseCookie.from("token", authResponse.getToken())
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(2 * 60 * 60)
+                    .build(); // Thời gian tồn tại của cookie (0)
 
-            Cookie newRefreshTokenCookie = new Cookie("rft", authResponse.getRefreshToken());
-            newRefreshTokenCookie.setHttpOnly(true);
-//            cookie.setSecure(true);
-            newRefreshTokenCookie.setPath("/");
-            cookie.setMaxAge(24 * 60 * 60);
-            response.addCookie(newRefreshTokenCookie);
+            ResponseCookie newRefreshTokenCookie = ResponseCookie.from("rft", authResponse.getRefreshToken())
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(24 * 60 * 60)
+                    .build();
+
+            response.addHeader("Set-Cookie", cookie.toString());
+            response.addHeader("Set-Cookie", newRefreshTokenCookie.toString());
         }
         return ResponseEntity.status(authResponse.getStatusCode()).body(authResponse);
     }
@@ -79,19 +85,25 @@ public class AuthenticationRestController {
 
         if (authResponse.getStatusCode() == 200) {
             // Thiết lập cookie HTTP-only
-            Cookie cookie = new Cookie("token", authResponse.getToken());
-            cookie.setHttpOnly(true);
-//             cookie.setSecure(true); // Chỉ gửi cookie qua HTTPS trong môi trường sản xuất
-            cookie.setPath("/");
-            cookie.setMaxAge(2 * 60 * 60); // Thời gian tồn tại của cookie (1 ngày)
-            response.addCookie(cookie);
 
-            Cookie newRefreshTokenCookie = new Cookie("rft", authResponse.getRefreshToken());
-            newRefreshTokenCookie.setHttpOnly(true);
-//            cookie.setSecure(true);
-            newRefreshTokenCookie.setPath("/");
-            cookie.setMaxAge(24 * 60 * 60);
-            response.addCookie(newRefreshTokenCookie);
+            ResponseCookie cookie = ResponseCookie.from("token", authResponse.getToken())
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(2 * 60 * 60)
+                    .build(); // Thời gian tồn tại của cookie (0)
+
+            ResponseCookie newRefreshTokenCookie = ResponseCookie.from("rft", authResponse.getRefreshToken())
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(24 * 60 * 60)
+                    .build();
+
+            response.addHeader("Set-Cookie", cookie.toString());
+            response.addHeader("Set-Cookie", newRefreshTokenCookie.toString());
             System.out.println("call finish");
         }
         return ResponseEntity.status(authResponse.getStatusCode()).body(authResponse);
@@ -101,19 +113,24 @@ public class AuthenticationRestController {
     public ResponseEntity<?> logOut(HttpServletResponse response, @RequestParam(name = "userId") Long userId){
         System.out.println(userId);
         // Thiết lập cookie HTTP-only
-        Cookie cookie = new Cookie("token", null);
-        cookie.setHttpOnly(true);
-//         cookie.setSecure(true); // Chỉ gửi cookie qua HTTPS trong môi trường sản xuất
-        cookie.setPath("/");
-        cookie.setMaxAge(0); // Thời gian tồn tại của cookie (0)
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from("token", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build(); // Thời gian tồn tại của cookie (0)
 
-        Cookie newRefreshTokenCookie = new Cookie("rft", null);
-        newRefreshTokenCookie.setHttpOnly(true);
-//         cookie.setSecure(true);
-        newRefreshTokenCookie.setPath("/");
-        newRefreshTokenCookie.setMaxAge(0);
-        response.addCookie(newRefreshTokenCookie);
+        ResponseCookie newRefreshTokenCookie = ResponseCookie.from("rft", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .path("/")
+                .maxAge(0)
+                .build();
+
+        response.addHeader("Set-Cookie", cookie.toString());
+        response.addHeader("Set-Cookie", newRefreshTokenCookie.toString());
 
         refreshTokenService.removeRefreshTokenByUserId(userId);
 

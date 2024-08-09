@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseCookie;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -101,18 +102,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         refresh.setExpiryDate(Instant.now().plusMillis(86400000));
                         refreshTokenService.updateRefreshToken(refresh);
 
-                        Cookie newAccessTokenCookie = new Cookie("token", newAccessToken);
-                        newAccessTokenCookie.setHttpOnly(true);
-                        newAccessTokenCookie.setPath("/");
-                        newAccessTokenCookie.setMaxAge(2 * 60 * 60);
-                        response.addCookie(newAccessTokenCookie);
+                        ResponseCookie newAccessTokenCookie = ResponseCookie.from("token", newAccessToken)
+                                .httpOnly(true)
+                                .secure(true)
+                                .sameSite("None")
+                                .path("/")
+                                .maxAge(2 * 60 * 60)
+                                .build(); // Thời gian tồn tại của cookie (0)
 
-                        Cookie newRefreshTokenCookie = new Cookie("rft", refresh.getToken());
-                        newRefreshTokenCookie.setHttpOnly(true);
-                        newRefreshTokenCookie.setPath("/");
-                        newRefreshTokenCookie.setMaxAge(24 * 60 * 60);
-                        response.addCookie(newRefreshTokenCookie);
+                        ResponseCookie newRefreshTokenCookie = ResponseCookie.from("rft", refresh.getToken())
+                                .httpOnly(true)
+                                .secure(true)
+                                .sameSite("None")
+                                .path("/")
+                                .maxAge(24 * 60 * 60)
+                                .build();
 
+                        response.addHeader("Set-Cookie", newAccessTokenCookie.toString());
+                        response.addHeader("Set-Cookie", newRefreshTokenCookie.toString());
                         setAuthentication(request, userDetails);
                     }
                 }

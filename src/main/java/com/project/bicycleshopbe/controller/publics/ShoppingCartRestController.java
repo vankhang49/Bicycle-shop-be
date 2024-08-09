@@ -72,7 +72,7 @@ public class ShoppingCartRestController {
     public ResponseEntity<?> saveBill(@RequestParam(name = "userId", defaultValue = "0") Long userId  , @RequestBody Bill bill) {
         System.out.println(bill);
         AppUser user = null;
-        if (userId != null) {
+        if (userId != 0 || userId != null) {
             user = userService.findById(userId);
         }
 

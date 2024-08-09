@@ -5,6 +5,7 @@ import com.project.bicycleshopbe.service.businnes.Impl.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,30 @@ public class ProductAuthRestController {
         if(product == null) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(product);
+    }
+
+    @PostMapping()
+    public ResponseEntity<?> saveProduct(@RequestBody Product product) {
+        System.out.println(product);
+        productService.save(product);
+        return new ResponseEntity<>(200, HttpStatus.CREATED);
+    }
+
+    @PutMapping()
+    public ResponseEntity<?> updateProduct(@RequestBody Product product) {
+        System.out.println(product);
+        productService.updateProduct(product);
+        return new ResponseEntity<>(200, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long productId) {
+        Product product = productService.findById(productId);
+        if(product == null) {
+            return ResponseEntity.notFound().build();
+        }
+        productService.remove(productId);
         return ResponseEntity.ok(product);
     }
 }

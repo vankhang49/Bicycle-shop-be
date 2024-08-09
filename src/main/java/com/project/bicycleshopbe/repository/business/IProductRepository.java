@@ -1,9 +1,11 @@
 package com.project.bicycleshopbe.repository.business;
 
 import com.project.bicycleshopbe.model.business.Product;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -40,5 +42,10 @@ public interface IProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT p.* from products p JOIN pricings pr ON p.product_id = pr.product_id " +
             "WHERE pr.price_id = :priceId", nativeQuery = true)
     Product getProductByPriceId(@Param("priceId") Long priceId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE products SET delete_flag = 0 WHERE product_id = :productId", nativeQuery = true)
+    void deleteProductByProductId(@Param("productId") Long productId);
 
 }
