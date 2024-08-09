@@ -15,7 +15,6 @@ RUN apt-get update && \
 COPY . .
 RUN gradle clean build -x test
 
-
 # Run stage
 
 FROM openjdk:21-jdk-slim
