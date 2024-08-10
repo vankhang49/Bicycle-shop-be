@@ -24,7 +24,7 @@ import java.util.Set;
 public class AuthenticationResponse {
     private int statusCode;
 
-    private String error;
+    private ErrorDetail errors;
 
     private String message;
 

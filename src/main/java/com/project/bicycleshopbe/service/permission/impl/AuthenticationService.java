@@ -3,6 +3,7 @@ package com.project.bicycleshopbe.service.permission.impl;
 import com.project.bicycleshopbe.dto.UserInforUserDetails;
 import com.project.bicycleshopbe.dto.request.*;
 import com.project.bicycleshopbe.dto.respone.AuthenticationResponse;
+import com.project.bicycleshopbe.dto.respone.ErrorDetail;
 import com.project.bicycleshopbe.model.permission.AppRole;
 import com.project.bicycleshopbe.model.permission.AppUser;
 import com.project.bicycleshopbe.repository.permission.IRoleRepository;
@@ -11,10 +12,13 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.FieldError;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -170,31 +174,33 @@ public class AuthenticationService {
      * @param updatePasswordRequest The user request containing the updated password details.
      * @return An {@link AuthenticationResponse} indicating the status of the password update operation.
      */
-    public AuthenticationResponse updatePassword(UpdatePasswordRequest updatePasswordRequest) {
-        String email = updatePasswordRequest.getEmail();
-        AppUser user = userRepository.findByEmail(email);
+    public AuthenticationResponse updatePassword(Long userId, UpdatePasswordRequest updatePasswordRequest) {
+        AppUser user = userRepository.findById(userId).orElse(null);
         if (user == null) {
             return AuthenticationResponse.builder()
                     .statusCode(404)
                     .message("Người dùng không được tìm thấy!")
                     .build();
         }
-        if (!passwordEncoder.matches(updatePasswordRequest.getOldPassword(), user.getPassword())) {
-            return AuthenticationResponse.builder()
-                    .statusCode(400)
-                    .message("Vui lòng nhập đúng mật khẩu!").build();
-        }
-        if (updatePasswordRequest.getNewPassword() == null && updatePasswordRequest.getNewPassword().isEmpty()) {
-            return AuthenticationResponse.builder()
-                    .statusCode(400)
-                    .message("Mật khẩu mới không được để trống")
-                    .build();
 
-        }
-        if (!updatePasswordRequest.getConfirmPassword().equals(updatePasswordRequest.getNewPassword())) {
+        ErrorDetail errors = new ErrorDetail("Validation errors");
+        String email = updatePasswordRequest.getEmail();
+
+        if (!user.getEmail().equals(email)) {
+            errors.addError("email", "Địa chỉ email không chính xác!");
             return AuthenticationResponse.builder()
                     .statusCode(400)
-                    .message("Mật khẩu không trùng khớp!").build();
+                    .message("Địa chỉ email không chính xác!")
+                    .errors(errors)
+                    .build();
+        }
+        if (!passwordEncoder.matches(updatePasswordRequest.getOldPassword(), user.getPassword())) {
+            errors.addError("oldPassword", "Mật khẩu không chính xác!");
+            return AuthenticationResponse.builder()
+                    .statusCode(400)
+                    .message("Mật khẩu không chính xác!")
+                    .errors(errors)
+                    .build();
         }
         try {
             user.setPassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
@@ -203,26 +209,11 @@ public class AuthenticationService {
             return AuthenticationResponse.builder()
                     .statusCode(401)
                     .message("Cập nhật mật khẩu thất bại")
-                    .error(e.getMessage())
                     .build();
         }
-        UserInforUserDetails userDetails = new UserInforUserDetails(user, user.getRoles());
-        var jwtToken = jwtService.generateToken(userDetails);
         return AuthenticationResponse.builder()
                 .statusCode(200)
                 .message("Cập nhật mật khẩu thành công!")
-                .userId(user.getUserId())
-                .email(user.getEmail())
-                .userCode(user.getUserCode())
-                .dateCreate(user.getDateCreate())
-                .avatar(user.getAvatar())
-                .dateOfBirth(user.getDateOfBirth())
-                .phoneNumber(user.getPhoneNumber())
-                .roles(user.getRoles())
-                .fullName(user.getFullName())
-                .gender(user.getGender())
-                .address(user.getAddress())
-                .token(jwtToken)
                 .build();
     }
 
@@ -235,7 +226,7 @@ public class AuthenticationService {
                     .message("Người dùng không được tìm thấy!")
                     .build();
         }
-        if (updateAvatarRequest.getAvatar() == null ) {
+        if (updateAvatarRequest.getAvatar() == null) {
             return AuthenticationResponse.builder()
                     .statusCode(400)
                     .message("Cập nhật hình ảnh không thành công!").build();
@@ -248,7 +239,6 @@ public class AuthenticationService {
             return AuthenticationResponse.builder()
                     .statusCode(401)
                     .message("Cập nhật hình ảnh thất bại")
-                    .error(e.getMessage())
                     .build();
         }
         user.setAvatar(updateAvatarRequest.getAvatar());
@@ -302,7 +292,7 @@ public class AuthenticationService {
         appUser.setAddress(appUserRequest.getAddress());
         try {
             userRepository.save(appUser);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return AuthenticationResponse.builder()
                     .statusCode(400)
                     .message("Không thể cập nhật nhân viên, lỗi hệ thống!")

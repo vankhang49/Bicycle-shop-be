@@ -170,10 +170,9 @@ public class AuthenticationRestController {
      * @return A {@link ResponseEntity} containing the {@link AuthenticationResponse}.
      */
     @PreAuthorize("hasAnyRole('ROLE_SALESMAN', 'ROLE_WAREHOUSE', 'ROLE_MANAGER', 'ROLE_ADMIN')")
-    @PutMapping("/update-password")
-    public ResponseEntity<?> updateUser(@Validated @RequestBody UpdatePasswordRequest updatePasswordRequest
-            , BindingResult bindingResult){
-        System.out.println("call update");
+    @PutMapping("/update-password/{userId}")
+    public ResponseEntity<?> updatePasswordUser(@Validated @RequestBody UpdatePasswordRequest updatePasswordRequest
+            , BindingResult bindingResult, @PathVariable Long userId){
         if (bindingResult.hasErrors()) {
             ErrorDetail errors = new ErrorDetail("Validation errors");
             for (FieldError error : bindingResult.getFieldErrors()) {
@@ -181,7 +180,7 @@ public class AuthenticationRestController {
             }
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
-        AuthenticationResponse response = authenticationService.updatePassword(updatePasswordRequest);
+        AuthenticationResponse response = authenticationService.updatePassword(userId ,updatePasswordRequest);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
