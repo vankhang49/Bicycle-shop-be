@@ -211,4 +211,33 @@ public class AuthenticationRestController {
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
+    @PostMapping("/check-email")
+    public ResponseEntity<?> checkEmail(@Validated @RequestBody CheckEmailRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ErrorDetail errors = new ErrorDetail("Validation errors");
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.addError(error.getField(), error.getDefaultMessage());
+            }
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+        boolean checkEmail = authenticationService.checkEmail(request);
+        if (!checkEmail) {
+            return ResponseEntity.status(404).body("Địa chỉ email hoặc số điện thoại không đúng, hãy nhập lại!");
+        }
+        return ResponseEntity.status(200).body(true);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@Validated @RequestBody ForgotPasswordRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            ErrorDetail errors = new ErrorDetail("Validation errors");
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                errors.addError(error.getField(), error.getDefaultMessage());
+            }
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+        AuthenticationResponse response = authenticationService.forgotPassword(request);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
 }

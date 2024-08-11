@@ -19,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.FieldError;
+import org.springframework.web.servlet.View;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -51,6 +52,8 @@ public class AuthenticationService {
     private RefreshTokenService refreshTokenService;
 
     private final AuthenticationManager authenticationManager;
+    @Autowired
+    private View error;
 
     /**
      * Authenticates a user with the provided login credentials.
@@ -202,6 +205,14 @@ public class AuthenticationService {
                     .errors(errors)
                     .build();
         }
+        if (updatePasswordRequest.getOldPassword().equals(updatePasswordRequest.getNewPassword())) {
+            errors.addError("newPassword", "Vui lòng không nhập mật khẩu cũ!");
+            return AuthenticationResponse.builder()
+                    .statusCode(400)
+                    .message("Vui lòng không nhập mật khẩu cũ!")
+                    .errors(errors)
+                    .build();
+        }
         try {
             user.setPassword(passwordEncoder.encode(updatePasswordRequest.getNewPassword()));
             userRepository.save(user);
@@ -312,6 +323,40 @@ public class AuthenticationService {
                 .fullName(appUser.getFullName())
                 .gender(appUser.getGender())
                 .address(appUser.getAddress())
+                .build();
+    }
+
+    public boolean checkEmail(CheckEmailRequest request) {
+        var user = userRepository.findByEmail(request.getEmail());
+        if (user == null) {
+            return false;
+        }
+        return user.getPhoneNumber().equals(request.getPhoneNumber());
+    }
+
+    public AuthenticationResponse forgotPassword(ForgotPasswordRequest request) {
+        var user = userRepository.findByEmail(request.getEmail());
+        ErrorDetail errors = new ErrorDetail("Validation errors");
+        if (user == null) {
+            errors.addError("email", "Không tìm thấy địa chỉ email!");
+            return AuthenticationResponse.builder()
+                    .statusCode(400)
+                    .message("Không tìm thấy địa chỉ email!")
+                    .errors(errors)
+                    .build();
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            return AuthenticationResponse.builder()
+                    .statusCode(401)
+                    .message("Cập nhật mật khẩu mới thất bại")
+                    .build();
+        }
+        return AuthenticationResponse.builder()
+                .statusCode(200)
+                .message("Cập nhật mật khẩu mới thành công!")
                 .build();
     }
 }
