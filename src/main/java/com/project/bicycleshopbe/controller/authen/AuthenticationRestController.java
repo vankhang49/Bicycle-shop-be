@@ -9,6 +9,7 @@ import com.project.bicycleshopbe.service.permission.IUserService;
 import com.project.bicycleshopbe.service.permission.impl.AuthenticationService;
 import com.project.bicycleshopbe.service.permission.impl.RefreshTokenService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -110,8 +111,19 @@ public class AuthenticationRestController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logOut(HttpServletResponse response, @RequestParam(name = "userId") Long userId){
+    public ResponseEntity<?> logOut(HttpServletRequest request, HttpServletResponse response,
+                                    @RequestParam(name = "userId") Long userId){
         System.out.println(userId);
+        String rft = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("rft".equals(cookie.getName())) {
+                    rft = cookie.getValue();
+                }
+            }
+        }
+
         // Thiết lập cookie HTTP-only
         ResponseCookie cookie = ResponseCookie.from("token", "")
                 .httpOnly(true)
@@ -132,7 +144,7 @@ public class AuthenticationRestController {
         response.addHeader("Set-Cookie", cookie.toString());
         response.addHeader("Set-Cookie", newRefreshTokenCookie.toString());
 
-        refreshTokenService.removeRefreshTokenByUserId(userId);
+        refreshTokenService.removeRefreshTokenByToken(rft);
 
         return ResponseEntity.status(200).body("Đăng xuất thành công!");
     }

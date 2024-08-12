@@ -49,6 +49,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
+        final String id =  request.getHeader("Userid");
+
         String jwt = null;
         String rft = null;
         final String email;
@@ -70,8 +72,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        if (rft == null) {
+        if (jwt == null) {
             filterChain.doFilter(request, response);
+            return;
+        }
+        if (rft == null) {
+            if (id != null) {
+                Long userId = Long.parseLong(id);
+                refreshTokenService.removeLastRefreshTokenByUserId(userId);
+            }
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 

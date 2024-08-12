@@ -44,8 +44,8 @@ public class RefreshTokenService {
         return false;
     }
 
-    public void removeRefreshTokenByUserId(Long userId){
-        refreshTokenRepository.deleteTokenByUserId(userId);
+    public void removeLastRefreshTokenByUserId(Long userId){
+        refreshTokenRepository.deleteLastTokenByUserId(userId);
     }
 
     public void removeRefreshTokenByToken(String token){
