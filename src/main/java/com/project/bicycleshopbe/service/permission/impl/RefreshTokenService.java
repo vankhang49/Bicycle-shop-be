@@ -23,7 +23,7 @@ public class RefreshTokenService {
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(userRepository.findByEmail(email))
                 .token(UUID.randomUUID().toString())
-                .expiryDate(Instant.now().plusMillis(86400000))
+                .expiryDate(Instant.now().plusMillis(1800000))
                 .build();
         return refreshTokenRepository.save(refreshToken);
     }

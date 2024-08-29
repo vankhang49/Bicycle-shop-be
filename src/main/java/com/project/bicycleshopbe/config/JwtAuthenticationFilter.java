@@ -109,7 +109,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         // Tạo mới access token
                         System.out.println("remake");
                         String newAccessToken = jwtService.generateToken(userDetails);
-                        refresh.setExpiryDate(Instant.now().plusMillis(86400000));
+                        refresh.setExpiryDate(Instant.now().plusMillis(1800000));
                         refreshTokenService.updateRefreshToken(refresh);
 
                         ResponseCookie newAccessTokenCookie = ResponseCookie.from("token", newAccessToken)
@@ -117,7 +117,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 .secure(true)
                                 .sameSite("None")
                                 .path("/")
-                                .maxAge(2 * 60 * 60)
+                                .maxAge(1 * 60 * 60)
                                 .build(); // Thời gian tồn tại của cookie (0)
 
                         ResponseCookie newRefreshTokenCookie = ResponseCookie.from("rft", refresh.getToken())
@@ -125,7 +125,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 .secure(true)
                                 .sameSite("None")
                                 .path("/")
-                                .maxAge(24 * 60 * 60)
+                                .maxAge(2 * 60 * 60)
                                 .build();
 
                         response.addHeader("Set-Cookie", newAccessTokenCookie.toString());

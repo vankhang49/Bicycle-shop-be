@@ -272,8 +272,11 @@ public class AuthenticationService {
 
     private String createUserCode() {
         List<AppUser> users = userRepository.findAllByRoleCustomer();
-        String userCode = users.getLast().getUserCode();
-        int codeNumber = Integer.parseInt(userCode.substring(2)) + 1;
+        int codeNumber = 1;
+        if (!users.isEmpty()) {
+            String userCode = users.getLast().getUserCode();
+            codeNumber =  Integer.parseInt(userCode.substring(2)) + 1;
+        }
         String userNewCode = "CU";
         if (codeNumber < 10) {
             userNewCode += "000" + codeNumber;

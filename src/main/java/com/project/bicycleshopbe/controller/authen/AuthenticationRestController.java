@@ -50,7 +50,7 @@ public class AuthenticationRestController {
                     .secure(true)
                     .sameSite("None")
                     .path("/")
-                    .maxAge(2 * 60 * 60)
+                    .maxAge(1 * 60 * 60)
                     .build(); // Thời gian tồn tại của cookie (0)
 
             ResponseCookie newRefreshTokenCookie = ResponseCookie.from("rft", authResponse.getRefreshToken())
@@ -58,7 +58,7 @@ public class AuthenticationRestController {
                     .secure(true)
                     .sameSite("None")
                     .path("/")
-                    .maxAge(24 * 60 * 60)
+                    .maxAge(2 * 60 * 60)
                     .build();
 
             response.addHeader("Set-Cookie", cookie.toString());
@@ -92,7 +92,7 @@ public class AuthenticationRestController {
                     .secure(true)
                     .sameSite("None")
                     .path("/")
-                    .maxAge(2 * 60 * 60)
+                    .maxAge(1 * 60 * 60)
                     .build(); // Thời gian tồn tại của cookie (0)
 
             ResponseCookie newRefreshTokenCookie = ResponseCookie.from("rft", authResponse.getRefreshToken())
@@ -100,7 +100,7 @@ public class AuthenticationRestController {
                     .secure(true)
                     .sameSite("None")
                     .path("/")
-                    .maxAge(24 * 60 * 60)
+                    .maxAge(2 * 60 * 60)
                     .build();
 
             response.addHeader("Set-Cookie", cookie.toString());
