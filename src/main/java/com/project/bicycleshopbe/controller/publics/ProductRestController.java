@@ -45,11 +45,11 @@ public class ProductRestController {
         if (page < 0) {
             page = 0;
         }
-
         Page<Product> products = productService.searchAllByProductNameAndByProductFamilyNameAndCategoryNameAndBrandNameAndPriceBetween(nameSearch, categoryName, brandName, familyName, priceBefore, priceAfter, PageRequest.of(page, 12));
         if (products.isEmpty()) {
             return ResponseEntity.status(404).body("Không có sản phẩm nào được tìm thấy!");
         }
+        System.out.println(products.getTotalElements());
         return ResponseEntity.ok(products);
     }
 
@@ -61,6 +61,15 @@ public class ProductRestController {
             return ResponseEntity.status(404).body("Không có sản phẩm nào được tìm thấy!");
         }
         return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/one-new-product")
+    public ResponseEntity<?> getOneNewProduct() {
+        Product product = productService.findOneNewProduct();
+        if (product == null) {
+            return ResponseEntity.status(404).body("Product not found!");
+        }
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping("/detail/{id}")

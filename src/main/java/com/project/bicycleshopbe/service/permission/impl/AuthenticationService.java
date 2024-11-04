@@ -132,6 +132,7 @@ public class AuthenticationService {
                     .message("Đăng ký thành công!!!")
                     .build();
         } catch (Exception e) {
+            e.printStackTrace();
             return AuthenticationResponse.builder()
                     .message("Đăng ký thất bại")
                     .statusCode(500).build();

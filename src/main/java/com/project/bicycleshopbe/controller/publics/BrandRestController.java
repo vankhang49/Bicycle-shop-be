@@ -33,16 +33,4 @@ public class BrandRestController {
         }
         return ResponseEntity.ok(brands);
     }
-
-    @PostMapping
-    public ResponseEntity<?> createBrand(@RequestBody Brand brand) {
-        brandService.save(brand);
-        return new ResponseEntity<>(200, HttpStatus.CREATED);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteBrand(@PathVariable(name = "id") Long brandId) {
-        brandService.remove(brandId);
-        return new ResponseEntity<>(200, HttpStatus.OK);
-    }
 }

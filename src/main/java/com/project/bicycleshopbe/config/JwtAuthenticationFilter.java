@@ -72,10 +72,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        if (jwt == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
         if (rft == null) {
             if (id != null) {
                 Long userId = Long.parseLong(id);

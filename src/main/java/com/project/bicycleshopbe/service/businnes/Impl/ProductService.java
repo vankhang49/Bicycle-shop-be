@@ -62,6 +62,11 @@ public class ProductService implements IProductService {
 
 
     @Override
+    public Product findOneNewProduct() {
+        return productRepository.findFirstByOrderByDateCreate();
+    }
+
+    @Override
     public void save(Product product) {
         product.setDateCreate(LocalDate.now());
         for (Pricing pricing : product.getPricingList()) {
