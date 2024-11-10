@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "app_roles")
+@Table(name = "app_roles", //
+        uniqueConstraints = { //
+                @UniqueConstraint(name = "APP_ROLE_UK", columnNames = "role_name")})
 public class AppRole {
 
 //    ROLE_ADMIN
