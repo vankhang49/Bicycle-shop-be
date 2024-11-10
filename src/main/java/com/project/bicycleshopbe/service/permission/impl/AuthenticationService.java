@@ -8,6 +8,7 @@ import com.project.bicycleshopbe.model.permission.AppRole;
 import com.project.bicycleshopbe.model.permission.AppUser;
 import com.project.bicycleshopbe.repository.permission.IRoleRepository;
 import com.project.bicycleshopbe.repository.permission.IUserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +96,7 @@ public class AuthenticationService {
      * @param request The authentication request containing login credentials.
      * @return An {@link AuthenticationResponse} containing the JWT token and authentication status.
      */
+    @Transactional
     public AuthenticationResponse register(RegisterRequest request) {
         try {
             var user = userRepository.findByEmail(request.getNewEmail());

@@ -11,16 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "app_roles", //
-        uniqueConstraints = { //
-                @UniqueConstraint(name = "APP_ROLE_UK", columnNames = "role_name") })
+@Table(name = "app_roles")
 public class AppRole {
 
 //    ROLE_ADMIN
 
     @Id
-    @GeneratedValue
-    @Column(name = "role_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id", nullable = false, unique = true)
     private Long roleId;
 
     @Column(name = "role_name", length = 30, nullable = false)

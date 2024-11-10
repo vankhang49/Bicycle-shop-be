@@ -15,14 +15,12 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "app_users", //
-        uniqueConstraints = { //
-                @UniqueConstraint(name = "APP_USER_UK", columnNames = "email") })
+@Table(name = "app_users")
 public class AppUser {
 
     @Id
-    @GeneratedValue
-    @Column(name = "user_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", nullable = false, unique = true)
     private Long userId;
 
     @Column(name = "email", length = 50)
